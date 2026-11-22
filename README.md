@@ -1,7 +1,7 @@
 # Dr. Md. Isma Azam (Zico): website (Next.js)
 
 Next.js 16 (App Router) site, exported as plain static files and hosted on Hostinger.
-Live: https://neurosurgeonzico-ismaazam.com
+Live: https://neurosurgeonzico.com
 
 ## How it works
 
@@ -42,7 +42,7 @@ npm run dev        # live editing at http://localhost:3000
 ## Google indexing
 
 The site is open to Google (no noindex header, `robots.txt` allows everything and points to the sitemap).
-After a push, submit `https://neurosurgeonzico-ismaazam.com/sitemap.xml` in Google Search Console.
+After a push, submit `https://neurosurgeonzico.com/sitemap.xml` in Google Search Console.
 To hide the site from Google again, add this line inside `<IfModule mod_headers.c>` in
 `config/htaccess.template`: `Header always set X-Robots-Tag "noindex, nofollow"`
 
