@@ -22,7 +22,7 @@ export function imgAttrs(file: string, sizes: string, largest = 1600): ImgAttrs 
   const src = use.length === 1 ? use[use.length - 1][0] : (use.find(([, w]) => w >= 960)?.[0] ?? use[use.length - 1][0]);
   return {
     src: A(src),
-    srcSet: v.map(([n, w]) => `${A(n)} ${w}w`).join(", "),
+    srcSet: use.map(([n, w]) => `${A(n)} ${w}w`).join(", "),
     sizes,
     "data-full": A(v[v.length - 1][0]),
   };

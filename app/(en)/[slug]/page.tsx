@@ -1,9 +1,10 @@
 // One page per service (spine-surgery, brain-tumor-surgery, ...), built from content/site-data.json.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import manifest from "@/content/image-manifest.json";
 import { Shell } from "@/components/Shell";
 import { Icon } from "@/components/Icon";
-import { LocalPhoto, Ph } from "@/components/Images";
+import { LocalPhoto } from "@/components/Images";
 import { BringList, Crumbs, CtaBand, FaqBlock, Html, JsonLd, SvcCard } from "@/components/Bits";
 import { CaseBlocks, ServiceGallery, casePhotos } from "@/components/Sections";
 import { DOC, SERVICES, SITE_URL, SV, fmt, secTotal, shortH2, site, stripTags, svcImg, total, type Service } from "@/lib/site";
@@ -16,12 +17,25 @@ export function generateStaticParams() {
 }
 
 type Props = { params: Promise<{ slug: string }> };
-const realOnly = (s: Service) => site.REAL_ONLY_SERVICES.includes(s.slug);
+const realOnly = (s: Service) => site.REAL_ONLY_SERVICES.includes(s.slug) || s.slug === "plid-lumbar-disc-surgery";
+const HERO_FALLBACK: Record<string, string> = {
+  "brain-tumor-surgery": "operating-theatre/dr-zico-operating-microscope.webp",
+  "hydrocephalus-chiari": "operating-theatre/dr-zico-endoscopic-surgery-monitor.webp",
+  "brain-aneurysm-stroke-surgery": "operating-theatre/dr-zico-operating-theatre-team.webp",
+  "spinal-tumor-surgery": "operating-theatre/dr-zico-minimally-invasive-surgical-access.webp",
+  "spinal-tb-potts-disease": "operating-theatre/dr-zico-patient-positioning.webp",
+  "head-injury-cranioplasty": "operating-theatre/postoperative-cranial-incision.webp",
+  "trigeminal-neuralgia-mvd": "operating-theatre/dr-zico-microscope-assisted-surgery.webp",
+};
+const IMG_MANIFEST = manifest as Record<string, { w: number; h: number }>;
+const dims = (file: string, w = 1200, h = 900) => ({ w: IMG_MANIFEST[file]?.w || w, h: IMG_MANIFEST[file]?.h || h });
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const s = SV[(await params).slug];
   if (!s) return {};
-  const og = realOnly(s) ? { file: svcImg(s.slug, "hero.jpg"), w: 1200, h: 750, alt: site.HERO_ALT[s.slug] } : undefined;
+  const heroFile = [svcImg(s.slug, "hero.jpg"), HERO_FALLBACK[s.slug]].find((file) => file && hasImage(file));
+  const heroSize = heroFile ? dims(heroFile, 1200, 750) : { w: 1200, h: 750 };
+  const og = heroFile && realOnly(s) ? { file: heroFile, w: heroSize.w, h: heroSize.h, alt: site.HERO_ALT[s.slug] || s.name } : undefined;
   return pageMeta(`/${s.slug}`, s.title, s.desc, og);
 }
 
@@ -40,11 +54,12 @@ function imagesSchema(s: Service) {
 export default async function ServicePage({ params }: Props) {
   const s = SV[(await params).slug];
   if (!s) notFound();
-  const real = realOnly(s);
   const book = `/appointment?concern=${s.concern}#book`;
-  const heroImg = real
-    ? <LocalPhoto file={svcImg(s.slug, "hero.jpg")} w={1200} h={750} alt={site.HERO_ALT[s.slug]} cls="ph--sm" sizes="(max-width: 760px) 100vw, 440px" eager />
-    : <Ph file={svcImg(s.slug, "hero.jpg")} w={1600} h={1000} label={`${s.name}: main image`} desc="OT photo of this operation (no patient face) or a clean medical illustration made in Canva" alt={`${s.name} by Dr. Zico`} cls="ph--sm" />;
+  const heroFile = [svcImg(s.slug, "hero.jpg"), HERO_FALLBACK[s.slug]].find((file) => file && hasImage(file));
+  const heroAlt = site.HERO_ALT[s.slug] || `${s.name} by Dr. Zico`;
+  const heroImg = heroFile
+    ? <LocalPhoto file={heroFile} {...dims(heroFile, 1200, 750)} alt={heroAlt} cls="ph--sm" sizes="(max-width: 760px) 100vw, 440px" eager />
+    : null;
 
   const crumbs: [string, string][] = [["Home", "/"], ["Services", "/services"], [s.name, `/${s.slug}`]];
   const schema = {
@@ -73,17 +88,16 @@ export default async function ServicePage({ params }: Props) {
           {s.overview ? <li><a href="#overview"><span>Overview</span></a></li> : null}
           {s.sections.map((sec) => <li key={sec.id}><a href={`#${sec.id}`}><span>{shortH2(sec.h2)}</span><span className="num">{fmt(secTotal(sec))}</span></a></li>)}
           <li><a href="#before"><span>Before your visit</span></a></li><li><a href="#faq"><span>Questions</span></a></li>
-          {site.SERVICE_GALLERIES[s.slug] ? <li><a href="#photos"><span>Photos</span></a></li> : null}
+          <li><a href="#photos"><span>Photos</span></a></li>
         </ol><a className="btn btn-primary toc-cta" href={book}>Book appointment</a></nav></aside>
         <div className="content">
           {s.overview ? <section className="block" id="overview"><div className="block-head"><div><h2>Overview</h2></div></div><Html className="prose" html={s.overview} /></section> : null}
           {s.sections.map((sec) => {
-            const short = sec.h2.replace(/\s*\(.*?\)/g, "").split(":")[0];
             const figFile = svcImg(s.slug, sec.id + ".jpg");
             const alt = site.SEC_ALT[`${s.slug}|${sec.id}`];
-            const fig = real
-              ? (hasImage(figFile) ? <LocalPhoto file={figFile} w={1200} h={900} alt={alt} cls="ph--sm" /> : null)
-              : <Ph file={figFile} w={1200} h={900} label={`Illustration: ${short}`} desc="Simple anatomical illustration of this condition (Canva). No real scans with patient names" alt={alt || stripTags(sec.h2)} cls="ph--sm" />;
+            const fig = hasImage(figFile)
+              ? <LocalPhoto file={figFile} {...dims(figFile)} alt={alt || stripTags(sec.h2)} cls="ph--sm" />
+              : null;
             return (
               <section className="block" id={sec.id} key={sec.id}>
                 <div className="block-head"><div><Html as="h2" html={sec.h2} /><span className="bn-sub" lang="bn">{sec.bn}</span></div><span className="count-pill">{fmt(secTotal(sec))}<small>operations</small></span></div>

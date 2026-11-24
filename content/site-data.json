@@ -1419,6 +1419,14 @@
  ],
  "CASES": [
   [
+   "new-mri",
+   "brain",
+   "Brain tumour: before and after surgery",
+   "ব্রেইন টিউমার: অপারেশনের আগে ও পরে",
+   "brain-tumor-surgery.html",
+   "MRI images supplied as before and after surgery. Diagnosis and outcome require clinician confirmation."
+  ],
+  [
    "cpa-axial",
    "brain",
    "CP angle tumour (axial view)",
@@ -1956,6 +1964,12 @@
   }
  ],
  "HAPPY_PATIENTS": [
+  {
+   "file": "happy-patient/chamber-consultation.webp",
+   "width": 1086,
+   "height": 1448,
+   "alt": "Clinical consultation at the hospital"
+  },
   {
    "file": "happy-patient/dr-zico-happy-patient-20.webp",
    "width": 1024,

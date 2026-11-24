@@ -17,7 +17,7 @@ function Header({ active }: { active: string }) {
       <a className="skip" href="#main">Skip to main content</a>
       <div className="topbar"><div className="wrap"><span>Appointment (personal assistant): <a className="pa" href={`tel:${DOC.pa_intl}`}>{DOC.pa}</a> · Popular Dhanmondi serial: <a href={`tel:${DOC.phone_popular_intl}`}>{DOC.phone_popular}</a> · Continental hotline: <a href={`tel:${DOC.continental_hotline}`}>{DOC.continental_hotline}</a></span><span className="emerg"><Icon name="alert" /> Emergency? Go to the nearest hospital emergency department.</span></div></div>
       <header className="site-header"><div className="wrap">
-        <a className="brand" href="/" aria-label="Dr. Zico, neurosurgeon, home"><Img className="brand-logo" file="logo.png" sizes="200px" largest={480} alt="Dr. Zico logo" w={793} h={219} lazy={false} /><span className="vh">Dr. Md. Isma Azam (Zico), Neurosurgeon, Brain &amp; Spine</span></a>
+        <a className="brand" href="/" aria-label="Dr. Zico, neurosurgeon, home"><Img className="brand-logo" file="logo.png" sizes="(max-width: 520px) 145px, 188px" largest={480} alt="Dr. Zico logo" w={793} h={219} lazy={false} /><span className="vh">Dr. Md. Isma Azam (Zico), Neurosurgeon, Brain &amp; Spine</span></a>
         <nav className="nav" aria-label="Main"><ul>
           {NAV.filter(([k]) => k !== "faq").map(([k, l, h]) => k === "services" ? (
             <li key={k} className={`has-menu${active === "services" || active === "service" ? " is-active" : ""}`}>
@@ -83,7 +83,7 @@ function Footer() {
     <>
       <footer className="site-footer"><div className="wrap">
         <div className="footer-grid">
-          <div className="stack-sm"><a className="brand" href="/"><Img className="brand-logo" file="logo.png" sizes="200px" largest={480} alt="Dr. Zico logo" w={793} h={219} /><span className="vh">Dr. Md. Isma Azam (Zico), Neurosurgeon in Dhaka</span></a>
+          <div className="stack-sm"><a className="brand" href="/"><Img className="brand-logo" file="logo.png" sizes="188px" largest={480} alt="Dr. Zico logo" w={793} h={219} /><span className="vh">Dr. Md. Isma Azam (Zico), Neurosurgeon in Dhaka</span></a>
             <p className="muted small">{DOC.degrees}</p>
             <p className="small"><a href={DOC.fb} rel="noopener" target="_blank">Facebook</a> · <a href={DOC.yt} rel="noopener" target="_blank">YouTube</a> · <a href={DOC.li} rel="noopener" target="_blank">LinkedIn</a></p></div>
           <div><h2>Services</h2><ul>{SERVICES.map((s) => <li key={s.slug}><a href={`/${s.slug}`}>{s.name}</a></li>)}</ul></div>

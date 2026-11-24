@@ -285,10 +285,22 @@
   /* ---------- carousel ---------- */
   $$("[data-carousel]").forEach(function (c) {
     var track = $(".car-track", c);
+    var loop = c.hasAttribute("data-loop") && track.children.length > 1;
+    var originals = loop ? Array.from(track.children) : [];
+    var firstClone;
+    if (loop) {
+      originals.slice(0, 5).forEach(function (card) {
+        var clone = card.cloneNode(true); clone.setAttribute("aria-hidden", "true"); clone.tabIndex = -1;
+        if (!firstClone) firstClone = clone; track.appendChild(clone);
+      });
+      var boundary = function () { return firstClone.offsetLeft - originals[0].offsetLeft; };
+      track.addEventListener("scrollend", function () { if (track.scrollLeft >= boundary() - 2) track.scrollTo({left: track.scrollLeft - boundary(), behavior: "instant"}); });
+    }
     var step = function (dir) {
       var card = track.firstElementChild;
       var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
       var w = card ? card.getBoundingClientRect().width + gap : 320;
+      if (loop && dir < 0 && track.scrollLeft < 2) track.scrollTo({left: boundary(), behavior: "instant"});
       track.scrollBy({ left: dir * w, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     };
     var prev = $("[data-car-prev]", c), next = $("[data-car-next]", c);
@@ -298,15 +310,16 @@
     var delay = +(c.getAttribute("data-autoplay") || 0);
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (delay && !reduce) {
-      var paused = false, timer;
+      var paused = false, timer, visible = true;
+      if ("IntersectionObserver" in window) new IntersectionObserver(function(entries) { visible = entries[0].isIntersecting; }).observe(c);
       var tick = function () {
-        if (paused || document.hidden) return;
+        if (paused || !visible || document.hidden) return;
         var atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 8;
-        if (atEnd) track.scrollTo({ left: 0, behavior: "smooth" }); else step(1);
+        if (loop) { if (track.scrollLeft >= boundary() - 2) track.scrollTo({left: 0, behavior: "instant"}); step(1); } else if (atEnd) track.scrollTo({ left: 0, behavior: "smooth" }); else step(1);
       };
       timer = window.setInterval(tick, delay);
       ["mouseenter", "focusin", "touchstart", "pointerdown"].forEach(function (ev) { c.addEventListener(ev, function () { paused = true; }, { passive: true }); });
-      ["mouseleave", "focusout"].forEach(function (ev) { c.addEventListener(ev, function () { paused = false; }); });
+      ["mouseleave", "focusout", "touchend", "touchcancel", "pointerup", "pointercancel"].forEach(function (ev) { c.addEventListener(ev, function () { paused = false; }); });
     }
     track.addEventListener("keydown", function (e) {
       if (e.target !== track) return;
@@ -314,6 +327,24 @@
       if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
     });
   });
+
+  /* Load carousel originals and loop clones only near the visible viewport. */
+  var deferredPhotos = $$("img[data-deferred-src]");
+  function loadDeferredPhoto(img) {
+    if (!img.dataset.deferredSrc) return;
+    if (img.dataset.deferredSizes) img.sizes = img.dataset.deferredSizes;
+    if (img.dataset.deferredSrcset) img.srcset = img.dataset.deferredSrcset;
+    img.src = img.dataset.deferredSrc;
+    img.removeAttribute("data-deferred-src");
+  }
+  if ("IntersectionObserver" in window) {
+    var photoObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) { loadDeferredPhoto(entry.target); photoObserver.unobserve(entry.target); }
+      });
+    }, {rootMargin: "350px 0px"});
+    deferredPhotos.forEach(function(img) { photoObserver.observe(img); });
+  } else { deferredPhotos.forEach(loadDeferredPhoto); }
 
   /* ---------- gallery filter ---------- */
   var filterBtns = $$("[data-filter]");
@@ -340,7 +371,8 @@
       btn.addEventListener("click", function () {
         var img = $("img", btn);
         if (!img) return; // no photo yet: placeholder only
-        lbImg.src = img.dataset.full || img.currentSrc || img.src; // largest optimized copy lbImg.alt = img.alt; lbCap.textContent = img.alt;
+        lbImg.src = img.dataset.full || img.currentSrc || img.src;
+        lbImg.alt = img.alt; lbCap.textContent = img.alt;
         lb.showModal();
       });
     });

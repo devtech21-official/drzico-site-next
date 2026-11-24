@@ -2,7 +2,7 @@ import { Shell } from "@/components/Shell";
 import { Icon } from "@/components/Icon";
 import { LocalPhoto, Ph } from "@/components/Images";
 import { CtaBand, FaqBlock, JsonLd, SvcCard, V } from "@/components/Bits";
-import { BaCarousel, ChamberCards, HappyPatientCarousel, Lightbox, VideoCarousel } from "@/components/Sections";
+import { BaCarousel, ClinicalGallery, TeamCarousel, ChamberCards, HappyPatientCarousel, Lightbox, VideoCarousel } from "@/components/Sections";
 import { DOC, SERVICES, SV, SITE_URL, fmt, site, total } from "@/lib/site";
 import { faqSchema, pageMeta, physicianSchema } from "@/lib/meta";
 import { asset } from "@/lib/assets";
@@ -39,7 +39,7 @@ export default function Home() {
           <div className="small muted" style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: "8px 16px", alignItems: "center" }}><span>Continental, Gulshan: <span className="status" data-chamber-status="continental">Sat to Thu · 8:30 AM to 4 PM</span></span><span>Popular, Dhanmondi: <span className="status" data-chamber-status="popular">Sat, Mon, Wed · 10 PM to 12 AM</span></span></div>
         </div>
         <div className="hero-media">
-          <LocalPhoto file="dr-zico-portrait.png" w={1212} h={1297} alt="Dr. Md. Isma Azam (Zico), neurosurgeon in Dhaka, in a white coat" cls="ph--fill" eager />
+          <LocalPhoto file="dr-zico-portrait.png" w={1212} h={1297} alt="Dr. Md. Isma Azam (Zico), neurosurgeon in Dhaka, in a white coat" cls="ph--fill" sizes="(max-width: 959px) calc(100vw - 32px), 46vw" />
           <div className="ledger ledger--float" aria-label="Surgical case log summary"><div className="ledger-head"><h2>Surgical case log</h2><span className="ledger-total">{fmt(site.ALL_TOTAL)}</span></div>
             <ol>{TOP.map(([n, c, u]) => <li key={n}><a href={u}>{n}</a><span className="dots"></span><span className="n">{fmt(c)}</span></li>)}</ol>
             <div className="ledger-foot"><a href="/about#case-log">See all 72 procedures</a></div></div>
@@ -70,7 +70,7 @@ export default function Home() {
       </div></section>
 
       <section className="bleed bleed--ot" aria-label="In the operating theatre">
-        <LocalPhoto file="ot-team-microscope.jpg" w={1800} h={1350} alt="Dr. Zico and the surgical team with a microscope and surgical monitor in the operating theatre" cls="ph--fill" />
+        <LocalPhoto file="ot-team-microscope.jpg" w={1800} h={1350} alt="Dr. Zico and the surgical team with a microscope and surgical monitor in the operating theatre" cls="ph--fill" defer sizes="100vw" />
         <div className="bleed-caption"><div className="wrap"><div className="caption-card"><span className="eyebrow">In the operating theatre</span><p>Brain and spine surgery happens in millimetres. Every operation is done under the microscope or endoscope with a full neurosurgery and anaesthesia team.</p></div></div></div>
       </section>
 
@@ -82,7 +82,7 @@ export default function Home() {
       </div></section>
 
       <section className="half-bleed section--tint" id="team">
-        <div className="hb-media"><Ph file="team-photo.jpg" w={1536} h={2048} label="Team photo" desc="Dr. Zico with neurosurgery and anaesthesia consultants, specialists and OT nurses" alt="Dr. Zico with his surgical team" cls="ph--fill" /></div>
+        <div className="hb-media"><TeamCarousel /></div>
         <div className="hb-text"><div className="stack"><span className="eyebrow">Team</span><h2>The team behind every operation</h2><p className="muted">Brain and spine surgery is team work. Each operation involves neurosurgery and anaesthesia consultants, specialists and trained OT nurses, and the same team follows patients through recovery.</p>
           <div className="bn-box" lang="bn"><h3>আমাদের টিম</h3><p>প্রতিটি অপারেশনে নিউরোসার্জারি ও অ্যানেস্থেসিয়া কনসালট্যান্ট, বিশেষজ্ঞ ডাক্তার ও প্রশিক্ষিত OT নার্স একসাথে কাজ করেন।</p></div></div></div>
       </section>
@@ -91,6 +91,11 @@ export default function Home() {
         <div className="section-head section-head--row"><div className="stack-sm"><span className="eyebrow">Our patients</span><h2>Back to everyday life</h2><p className="muted">Patients and families after treatment, shared with their written permission.</p><p className="small bn" lang="bn">আমাদের রোগীরা: চিকিৎসার পর স্বাভাবিক জীবনে</p></div><a className="btn btn-ghost" href="/gallery#patients"><Icon name="image" /> View patient photos</a></div>
         <HappyPatientCarousel />
         <Lightbox label="Patient photo viewer" />
+      </div></section>
+
+      <section className="section section--tint" id="clinical-gallery"><div className="wrap">
+        <div className="section-head"><span className="eyebrow">Clinical gallery</span><h2>Surgical &amp; Clinical Gallery</h2><p className="muted">Operating theatre, clinical care and service photographs.</p><p className="small bn" lang="bn">অপারেশন ও চিকিৎসার ছবি</p></div>
+        <ClinicalGallery />
       </div></section>
 
       <section className="section section--tint" id="before-after"><div className="wrap">

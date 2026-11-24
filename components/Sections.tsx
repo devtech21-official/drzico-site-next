@@ -3,7 +3,8 @@ import { Icon } from "@/components/Icon";
 import { Img, LocalPhoto, Ph } from "@/components/Images";
 import { V } from "@/components/Bits";
 import { DOC, site, svcImg, caseKey, url, BA_DIR, type CaseRow, type Service } from "@/lib/site";
-import { SZ_CARD } from "@/lib/images";
+import manifest from "@/content/image-manifest.json";
+import { SZ_CARD, SZ_HALF } from "@/lib/images";
 
 export function ChamberCards({ page }: { page: "Home" | "Appointment" }) {
   const eager = page === "Appointment";
@@ -28,11 +29,12 @@ export function ChamberCards({ page }: { page: "Home" | "Appointment" }) {
 
 export function BaCard({ c }: { c: CaseRow }) {
   const [cid, cat, title, bn, link, note] = c;
+  const dimensions = (side: string) => { const e = (manifest as Record<string, {w: number; h: number}>)[`${BA_DIR}/case-${cid}-${side}.jpg`]; return {w: e?.w || 1200, h: e?.h || 900}; };
   return (
-    <article className="ba-card" data-cat={cat}>
+    <article className="ba-card" data-cat={cat} data-case-id={cid}>
       <div className="ba" style={{ ["--pos" as string]: "50%" }}>
-        <div className="ba-layer ba-after"><Ph file={`${BA_DIR}/case-${cid}-after.jpg`} w={1200} h={900} label={"After: " + title} desc={note + " (after)"} alt={"After surgery: " + title} cls="ph--fill ph--sm" /></div>
-        <div className="ba-layer ba-before"><Ph file={`${BA_DIR}/case-${cid}-before.jpg`} w={1200} h={900} label={"Before: " + title} desc={note + " (before)"} alt={"Before surgery: " + title} cls="ph--fill ph--sm" /></div>
+        <div className="ba-layer ba-after"><Ph file={`${BA_DIR}/case-${cid}-after.jpg`} {...dimensions("after")} label={"After: " + title} desc={note + " (after)"} alt={"After surgery: " + title} cls="ph--fill ph--sm" /></div>
+        <div className="ba-layer ba-before"><Ph file={`${BA_DIR}/case-${cid}-before.jpg`} {...dimensions("before")} label={"Before: " + title} desc={note + " (before)"} alt={"Before surgery: " + title} cls="ph--fill ph--sm" /></div>
         <span className="ba-tag ba-tag--b">Before</span><span className="ba-tag ba-tag--a">After</span><span className="ba-handle" aria-hidden="true"></span>
         <input className="ba-range" type="range" min="0" max="100" defaultValue="50" aria-label={`Compare before and after: ${title}`} />
       </div>
@@ -138,27 +140,62 @@ export function CaseBlocks({ slug, sectionId }: { slug: string; sectionId: strin
 
 export function ServiceGallery({ s }: { s: Service }) {
   const g = site.SERVICE_GALLERIES[s.slug];
-  if (!g) return null;
+  const fallbackPhotos = [
+    { file: "operating-theatre/postoperative-cranial-incision.webp", alt: "Postoperative cranial incision" },
+    { file: "team-surgical-icu.webp", alt: "Surgical ICU team" },
+    { file: "happy-patient/chamber-consultation.webp", alt: "Consultation and recovery follow-up" },
+  ].flatMap((p) => {
+    const e = (manifest as Record<string, { w: number; h: number }>)[p.file];
+    return e ? [{ ...p, width: e.w, height: e.h }] : [];
+  });
+
+  let heading = g?.h2 || "Clinical photo carousel";
+  let headingBn = g?.bn || "বাস্তব ক্লিনিক্যাল ছবি";
+  let intro = g?.intro || "Real clinical, OT and recovery photos from Dr. Zico's work. Demo images are not used here.";
   let cards;
-  if (g.photos) {
+
+  if (g?.photos) {
     const photos = casePhotos(s.slug), n = photos.length;
     cards = photos.map(([f, w, h, grp, what], i) => (
       <button key={f} className="car-photo car-photo--whole" type="button" data-lightbox data-case={caseKey(grp)} aria-label={`Open photo ${i + 1} of ${n}: ${grp}`}>
         <Img file={svcImg(s.slug, f)} sizes={SZ_CARD} alt={`${grp} by Dr. Zico: ${what}`} w={w} h={h} />
         <span className="car-cap">{grp}</span></button>
     ));
-  } else {
-    cards = Array.from({ length: g.count! }, (_, k) => k + 1).map((i) => (
+  } else if (g?.count) {
+    cards = Array.from({ length: g.count }, (_, k) => k + 1).map((i) => (
       <button key={i} className="car-photo" type="button" data-lightbox aria-label={`Open photo ${i} of ${g.count}`}>
         <Img file={svcImg(s.slug, `case-${String(i).padStart(2, "0")}.jpg`)} sizes={SZ_CARD} alt={`${g.alt} ${i}`} w={750} h={1000} /></button>
     ));
+  } else {
+    if (!fallbackPhotos.length) return null;
+    cards = fallbackPhotos.map((p, i) => (
+      <button key={p.file} className="car-photo car-photo--whole" type="button" data-lightbox aria-label={`Open photo ${i + 1} of ${fallbackPhotos.length}: ${p.alt}`}>
+        <Img file={p.file} sizes={SZ_CARD} alt={`${s.name}: ${p.alt}`} w={p.width} h={p.height} />
+        <span className="car-cap">{p.alt}</span></button>
+    ));
   }
+
   return (
-    <section className="block" id="photos"><div className="block-head"><div><h2>{g.h2}</h2><span className="bn-sub" lang="bn">{g.bn}</span></div></div>
-      <p className="muted">{g.intro}</p>
+    <section className="block" id="photos"><div className="block-head"><div><h2>{heading}</h2><span className="bn-sub" lang="bn">{headingBn}</span></div></div>
+      <p className="muted">{intro}</p>
       <div className="carousel carousel--photos" data-carousel data-autoplay="3500">
         <div className="car-track" tabIndex={0} aria-label="Photos, scroll sideways">{cards}</div>
         <Arrows what="photo" /></div>
       <Lightbox /></section>
   );
+}
+
+
+/** Shared clinical gallery: existing local service photos plus OT photos. */
+export function ClinicalGallery() {
+  const servicePhotos = Object.entries(manifest).filter(([file]) => file.startsWith("services/")).map(([file, e]) => ({file, width: e.w, height: e.h, alt: "Service photo: " + file.split("/")[1].replace(/-/g, " ")}));
+  const photos = Array.from(new Map([{file: "operating-theatre/postoperative-cranial-incision.webp", width: 1200, height: 1600, alt: "Postoperative cranial incision"}, ...site.OPERATING_THEATRE, ...servicePhotos].map(p => [p.file, p])).values());
+  return <div className="carousel carousel--photos carousel--clinical" data-carousel data-loop data-autoplay="3500" role="region" aria-label="Surgical and clinical photos">
+    <div className="car-track" tabIndex={0} aria-label="Clinical photos, scroll sideways">{photos.map((p, i) => <button key={p.file} className="car-photo car-photo--whole" type="button" data-lightbox aria-label={`Open clinical photo ${i+1}`}><Img file={p.file} defer sizes="(max-width: 560px) 78vw, (max-width: 1000px) 48vw, 290px" alt={p.alt} w={p.width} h={p.height} /></button>)}</div><Arrows what="clinical photo" />
+  </div>;
+}
+
+export function TeamCarousel() {
+  const photos = [{file: "team-photo.jpg", alt: "Surgical team"}, {file: "team-surgical-icu.webp", alt: "Hospital team outside the surgical ICU"}];
+  return <div className="carousel carousel--team" data-carousel data-loop data-autoplay="4500" role="region" aria-label="Team photos"><div className="car-track" tabIndex={0} aria-label="Team photos, scroll sideways">{photos.map(p => {const e = (manifest as Record<string, {w: number; h: number}>)[p.file]; return <button key={p.file} className="car-photo" type="button" data-lightbox aria-label={p.alt}><Img file={p.file} defer sizes="(max-width: 959px) 100vw, 50vw" alt={p.alt} w={e.w} h={e.h} /></button>;})}</div><Arrows what="team photo" /></div>;
 }

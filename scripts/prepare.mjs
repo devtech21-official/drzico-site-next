@@ -8,8 +8,9 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import sharp from "sharp";
+import { fileURLToPath } from "node:url";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const IMG = path.join(ROOT, "public", "assets", "img");
 const OPT = "_opt";
 const WIDTHS = [240, 480, 720, 960, 1600];
@@ -39,7 +40,8 @@ for (const src of walk(IMG).sort()) {
   const hash = crypto.createHash("sha1").update(buf).digest("hex");
   const meta = await sharp(buf).metadata();
   const ow = meta.width, oh = meta.height;
-  const widths = [...new Set([...WIDTHS.filter((w) => w < ow), Math.min(ow, WIDTHS[WIDTHS.length - 1])])].sort((a, b) => a - b);
+  const preferred = rel === "logo.png" ? [120, 160, 240, 320, 400, 480, 720, 960, 1600] : rel === "dr-zico-portrait.png" ? [240, 480, 640, 720, 800, 960, 1600] : WIDTHS;
+  const widths = [...new Set([...preferred.filter((w) => w < ow), Math.min(ow, preferred[preferred.length - 1])])].sort((a, b) => a - b);
   const base = rel.replace(/\.[^.]+$/, "");
   const variants = [];
   for (const w of widths) {

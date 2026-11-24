@@ -413,6 +413,60 @@
    ]
   ]
  },
+ "before-after/case-new-mri-after.jpg": {
+  "w": 1290,
+  "h": 1116,
+  "hash": "df413085021e6749794b82ad574597cde8b8fd76",
+  "variants": [
+   [
+    "_opt/before-after/case-new-mri-after-240.webp",
+    240
+   ],
+   [
+    "_opt/before-after/case-new-mri-after-480.webp",
+    480
+   ],
+   [
+    "_opt/before-after/case-new-mri-after-720.webp",
+    720
+   ],
+   [
+    "_opt/before-after/case-new-mri-after-960.webp",
+    960
+   ],
+   [
+    "_opt/before-after/case-new-mri-after-1290.webp",
+    1290
+   ]
+  ]
+ },
+ "before-after/case-new-mri-before.jpg": {
+  "w": 1290,
+  "h": 1140,
+  "hash": "c0494a8a54b28a528fbdb4b8afef01e827074d86",
+  "variants": [
+   [
+    "_opt/before-after/case-new-mri-before-240.webp",
+    240
+   ],
+   [
+    "_opt/before-after/case-new-mri-before-480.webp",
+    480
+   ],
+   [
+    "_opt/before-after/case-new-mri-before-720.webp",
+    720
+   ],
+   [
+    "_opt/before-after/case-new-mri-before-960.webp",
+    960
+   ],
+   [
+    "_opt/before-after/case-new-mri-before-1290.webp",
+    1290
+   ]
+  ]
+ },
  "before-after/case-pituitary-after.jpg": {
   "w": 900,
   "h": 900,
@@ -784,8 +838,16 @@
     480
    ],
    [
+    "_opt/dr-zico-portrait-640.webp",
+    640
+   ],
+   [
     "_opt/dr-zico-portrait-720.webp",
     720
+   ],
+   [
+    "_opt/dr-zico-portrait-800.webp",
+    800
    ],
    [
     "_opt/dr-zico-portrait-960.webp",
@@ -794,6 +856,33 @@
    [
     "_opt/dr-zico-portrait-1212.webp",
     1212
+   ]
+  ]
+ },
+ "happy-patient/chamber-consultation.webp": {
+  "w": 1086,
+  "h": 1448,
+  "hash": "3b17273fc1d3b04c54b293b72607b69d2525f293",
+  "variants": [
+   [
+    "_opt/happy-patient/chamber-consultation-240.webp",
+    240
+   ],
+   [
+    "_opt/happy-patient/chamber-consultation-480.webp",
+    480
+   ],
+   [
+    "_opt/happy-patient/chamber-consultation-720.webp",
+    720
+   ],
+   [
+    "_opt/happy-patient/chamber-consultation-960.webp",
+    960
+   ],
+   [
+    "_opt/happy-patient/chamber-consultation-1086.webp",
+    1086
    ]
   ]
  },
@@ -1339,8 +1428,24 @@
   "hash": "7980e47b1a077c7f509d3f339536df35753762b9",
   "variants": [
    [
+    "_opt/logo-120.webp",
+    120
+   ],
+   [
+    "_opt/logo-160.webp",
+    160
+   ],
+   [
     "_opt/logo-240.webp",
     240
+   ],
+   [
+    "_opt/logo-320.webp",
+    320
+   ],
+   [
+    "_opt/logo-400.webp",
+    400
    ],
    [
     "_opt/logo-480.webp",
@@ -1561,6 +1666,33 @@
    [
     "_opt/operating-theatre/dr-zico-patient-positioning-1600.webp",
     1600
+   ]
+  ]
+ },
+ "operating-theatre/postoperative-cranial-incision.webp": {
+  "w": 1200,
+  "h": 1600,
+  "hash": "e5e37765058de54f45139c401fba862e9b870247",
+  "variants": [
+   [
+    "_opt/operating-theatre/postoperative-cranial-incision-240.webp",
+    240
+   ],
+   [
+    "_opt/operating-theatre/postoperative-cranial-incision-480.webp",
+    480
+   ],
+   [
+    "_opt/operating-theatre/postoperative-cranial-incision-720.webp",
+    720
+   ],
+   [
+    "_opt/operating-theatre/postoperative-cranial-incision-960.webp",
+    960
+   ],
+   [
+    "_opt/operating-theatre/postoperative-cranial-incision-1200.webp",
+    1200
    ]
   ]
  },
@@ -2531,6 +2663,33 @@
    [
     "_opt/team-photo-1536.webp",
     1536
+   ]
+  ]
+ },
+ "team-surgical-icu.webp": {
+  "w": 1600,
+  "h": 1200,
+  "hash": "fdb01ab92c09dc527e6cb805b9d2ec97022965e1",
+  "variants": [
+   [
+    "_opt/team-surgical-icu-240.webp",
+    240
+   ],
+   [
+    "_opt/team-surgical-icu-480.webp",
+    480
+   ],
+   [
+    "_opt/team-surgical-icu-720.webp",
+    720
+   ],
+   [
+    "_opt/team-surgical-icu-960.webp",
+    960
+   ],
+   [
+    "_opt/team-surgical-icu-1600.webp",
+    1600
    ]
   ]
  }

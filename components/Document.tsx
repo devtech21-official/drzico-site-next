@@ -20,7 +20,8 @@ export function Document({ lang, children }: { lang: "en" | "bn"; children: Reac
       <head>
         <link rel="preload" href="/assets/fonts/spectral-latin-600-normal.woff2" as="font" type="font/woff2" crossOrigin="" />
         <link rel="preload" href="/assets/fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossOrigin="" />
-        <link rel="preload" href="/assets/fonts/public-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossOrigin="" />
+        <link rel="preload" href="/assets/fonts/public-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossOrigin="" media="(min-width: 960px)" />
+        <link rel="preload" href="/assets/fonts/hind-siliguri-bengali-600-normal.woff2" as="font" type="font/woff2" crossOrigin="" />
         <link rel="preload" href="/assets/fonts/public-sans-latin-700-normal.woff2" as="font" type="font/woff2" crossOrigin="" />
         <style dangerouslySetInnerHTML={{ __html: FONTS }} />
         <link rel="stylesheet" href={asset("/assets/css/style.css")} />

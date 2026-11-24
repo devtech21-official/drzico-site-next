@@ -1,6 +1,6 @@
 import { Shell } from "@/components/Shell";
 import { Crumbs, CtaBand, JsonLd } from "@/components/Bits";
-import { BaCard, HappyPatientCarousel, Lightbox, OtPhotos } from "@/components/Sections";
+import { BaCard, HappyPatientCarousel, Lightbox, ClinicalGallery } from "@/components/Sections";
 import { site } from "@/lib/site";
 import { breadcrumbSchema, pageMeta, physicianSchema } from "@/lib/meta";
 
@@ -28,8 +28,8 @@ export default function Gallery() {
         <HappyPatientCarousel />
       </div></section>
       <section className="section section--tint" id="photos"><div className="wrap">
-        <div className="section-head"><span className="eyebrow">Photo gallery</span><h2>In the operating theatre and the ward</h2><p className="muted">Tap any photo to see it larger.</p></div>
-        <div className="gallery gallery--lb gallery--ot"><OtPhotos lightbox /></div>
+        <div className="section-head"><span className="eyebrow">Photo gallery</span><h2>Surgical &amp; Clinical Gallery</h2><p className="muted">Tap any photo to see it larger.</p></div>
+        <ClinicalGallery />
       </div></section>
       <Lightbox label="Photo viewer" />
       <section className="cta-full"><div className="wrap"><CtaBand /></div></section>
