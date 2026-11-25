@@ -52,25 +52,6 @@ if (STRIP_RUNTIME) {
   fs.rmSync(path.join(OUT, "_next"), { recursive: true, force: true });
 }
 
-// Home page: remove one render-blocking stylesheet request without changing its rules.
-const homeFile = path.join(OUT, "index.html");
-const homeCss = fs.readFileSync(path.join(OUT, "assets", "css", "style.css"), "utf8")
-  .replace(/url\(["']?\.\.\/img\//g, 'url("/assets/img/');
-if (fs.existsSync(homeFile)) {
-  const html = fs.readFileSync(homeFile, "utf8");
-  const stylesheet = /<link\b(?=[^>]*\brel="stylesheet")(?=[^>]*\bhref="\/assets\/css\/style\.css(?:\?[^" ]*)?")[^>]*>/;
-  let optimized = html.replace(stylesheet, () => `<style>${homeCss}</style>`);
-  // The portrait is below the text on narrow screens, but visible immediately on desktop.
-  // Preload its actual responsive source only for desktop, without competing with mobile text.
-  const portrait = optimized.match(/<img\b[^>]*\balt="Dr\. Md\. Isma Azam \(Zico\), neurosurgeon in Dhaka, in a white coat"[^>]*>/);
-  if (portrait) {
-    const srcset = portrait[0].match(/\bsrcSet="([^"]+)"/i)?.[1];
-    const sizes = portrait[0].match(/\bsizes="([^"]+)"/i)?.[1];
-    if (srcset && sizes) optimized = optimized.replace("</head>", `<link rel="preload" as="image" media="(min-width: 960px)" imagesrcset="${srcset}" imagesizes="${sizes}" fetchpriority="high"></head>`);
-  }
-  fs.writeFileSync(homeFile, optimized);
-}
-
 // 1) checks: no em dash anywhere, no page without a title
 const problems = [];
 for (const f of htmlFiles) {
